@@ -1,5 +1,5 @@
 {
-  "name": "@nestjscc/nestjs-authentication",
+  "name": "@comana/nestjs-authentication",
   "version": "0.0.1",
   "description": "NestJS npm package authentication",
   "author": "Christiam Omaña <christiamchivico@gmail.com>",

@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   Unique,
+  IsNull,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
@@ -18,6 +19,13 @@ export class User extends BaseEntity {
 
   @Column()
   password: string;
+
+  @Column({
+    name: 'recover-token',
+    type: 'varchar',
+    nullable: true,
+  })
+  recoverToken: string;
 
   @Column()
   salt: string;

@@ -1,17 +1,16 @@
+import { AuthUpdatePasswordDto } from './dto/auth-update-password.dto';
 import {
   Controller,
   Post,
   Get,
   Body,
   ValidationPipe,
-  UseGuards,
-  Req,
+  Query,
+  Param,
+  Patch,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { User } from './user.entity';
 import { AuthService } from './auth.service';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
-import { GetUser } from 'src/commons/decorators/get-user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -31,8 +30,15 @@ export class AuthController {
     return this.authService.signIn(authCredentialsDto);
   }
 
-  @Get('test')
-  test() {
-    return 'AuthService';
+  @Get('recover-password/:username')
+  recoverPassword(@Param('username') username) {
+    return this.authService.recoverPassword(username);
+  }
+
+  @Patch('password')
+  updateUserPassword(
+    @Body(ValidationPipe) authUpdatePasswordDto: AuthUpdatePasswordDto,
+  ) {
+    return this.authService.updateUserPassword(authUpdatePasswordDto);
   }
 }

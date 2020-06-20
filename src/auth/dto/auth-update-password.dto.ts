@@ -4,15 +4,12 @@ import {
   MinLength,
   MaxLength,
   Matches,
-  IsEmail,
 } from 'class-validator';
 
-export class AuthCredentialsDto {
-  @MinLength(4)
-  @MaxLength(30)
+export class AuthUpdatePasswordDto {
   @IsNotEmpty()
-  @IsEmail()
-  username: string;
+  @IsString()
+  token: string;
 
   @IsString()
   @MinLength(8)

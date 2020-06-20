@@ -1,6 +1,8 @@
+import { AuthUpdatePasswordDto } from './dto/auth-update-password.dto';
 import {
   InternalServerErrorException,
   ConflictException,
+  NotFoundException,
 } from '@nestjs/common';
 import { Repository, EntityRepository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -18,7 +20,6 @@ export class UserRepository extends Repository<User> {
     try {
       await user.save();
     } catch (error) {
-      console.log(error);
       if (+error.code === 23505) {
         throw new ConflictException('Username already exist');
       } else {
@@ -34,6 +35,24 @@ export class UserRepository extends Repository<User> {
     const user = await this.findOne({ username });
     if (user && (await user.validatePassword(password))) {
       return user.username;
+    }
+    return null;
+  }
+
+  async updateUserPassword(
+    username,
+    authUpdatePasswordDto: AuthUpdatePasswordDto,
+  ): Promise<User> {
+    const user = await this.findOne({ username });
+    if (!user) {
+      throw new NotFoundException('Email not found');
+    }
+    if (user.recoverToken === authUpdatePasswordDto.token) {
+      user.password = await this.hashPassword(
+        authUpdatePasswordDto.password,
+        user.salt,
+      );
+      return await user.save();
     }
     return null;
   }
