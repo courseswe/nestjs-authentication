@@ -1,26 +1,35 @@
-import { AuthUpdatePasswordDto } from './dto/auth-update-password.dto';
 import {
   Controller,
   Post,
   Get,
   Body,
   ValidationPipe,
-  Query,
   Param,
   Patch,
+  Res,
+  HttpStatus,
 } from '@nestjs/common';
+import { plainToClass } from 'class-transformer';
+import { User } from './user.entity';
 import { AuthService } from './auth.service';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
+import { AuthUpdatePasswordDto } from './dto/auth-update-password.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('signup')
-  signUp(
+  async signUp(
     @Body(ValidationPipe) authCredentialsDto: AuthCredentialsDto,
-  ): Promise<void> {
-    return this.authService.signUp(authCredentialsDto);
+    @Res() response,
+  ): Promise<User> {
+    try {
+      let user = await this.authService.signUp(authCredentialsDto);
+      return response.status(HttpStatus.CREATED).json(plainToClass(User, user));
+    } catch (error) {
+      return response.status(HttpStatus.BAD_REQUEST).json(error);
+    }
   }
 
   @Post('signin')

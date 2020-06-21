@@ -6,6 +6,7 @@ import {
   Unique,
   IsNull,
 } from 'typeorm';
+import { Exclude } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
 
 @Entity()
@@ -17,6 +18,7 @@ export class User extends BaseEntity {
   @Column()
   username: string;
 
+  @Exclude()
   @Column()
   password: string;
 
@@ -27,6 +29,7 @@ export class User extends BaseEntity {
   })
   recoverToken: string;
 
+  @Exclude()
   @Column()
   salt: string;
 

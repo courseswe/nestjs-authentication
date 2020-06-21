@@ -1,3 +1,4 @@
+import { User } from './user.entity';
 import { AuthUpdatePasswordDto } from './dto/auth-update-password.dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
@@ -18,7 +19,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
+  async signUp(authCredentialsDto: AuthCredentialsDto): Promise<User> {
     return await this.userRepository.signUp(authCredentialsDto);
   }
 

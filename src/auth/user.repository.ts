@@ -1,8 +1,9 @@
 import { AuthUpdatePasswordDto } from './dto/auth-update-password.dto';
 import {
   InternalServerErrorException,
-  ConflictException,
   NotFoundException,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { Repository, EntityRepository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -11,17 +12,24 @@ import { User } from './user.entity';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
-  async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
+  async signUp(authCredentialsDto: AuthCredentialsDto): Promise<User> {
     const { username, password } = authCredentialsDto;
     const user = new User();
     user.username = username;
     user.salt = await bcrypt.genSalt();
     user.password = await this.hashPassword(password, user.salt);
     try {
-      await user.save();
+      return await user.save();
     } catch (error) {
+      console.log(JSON.stringify(error));
       if (+error.code === 23505) {
-        throw new ConflictException('Username already exist');
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: 'User already exist',
+          },
+          HttpStatus.BAD_REQUEST,
+        );
       } else {
         throw new InternalServerErrorException();
       }
